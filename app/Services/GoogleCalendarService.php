@@ -8,6 +8,8 @@ use Google\Client;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event as GoogleEvent;
 use Google\Service\Calendar\EventDateTime;
+use Illuminate\Support\Str;
+use Google\Service\Calendar\Channel;
 
 class GoogleCalendarService
 {
@@ -146,5 +148,40 @@ class GoogleCalendarService
         );
 
         return $events->getItems();
+    }
+
+    public function startWatch(GoogleAccount $googleAccount): GoogleAccount
+    {
+        $calendarService = $this->getCalendarService($googleAccount);
+
+        $channelId = (string) Str::uuid();
+        $channelToken = Str::random(80);
+
+        $channel = new Channel([
+            'id' => $channelId,
+            'type' => 'web_hook',
+            'address' => config('services.google.webhook_uri'),
+            'token' => $channelToken,
+            'params' => [
+                // 604800 seconds = 7 days
+                'ttl' => '604800',
+            ],
+        ]);
+
+        $watchResponse = $calendarService->events->watch(
+            $googleAccount->calendar_id,
+            $channel
+        );
+
+        $googleAccount->update([
+            'channel_id' => $watchResponse->getId(),
+            'channel_token' => $channelToken,
+            'resource_id' => $watchResponse->getResourceId(),
+            'watch_expires_at' => $watchResponse->getExpiration()
+                ? now()->setTimestamp($watchResponse->getExpiration() / 1000)
+                : now()->addDays(7),
+        ]);
+
+        return $googleAccount;
     }
 }

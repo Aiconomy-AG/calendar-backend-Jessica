@@ -1,0 +1,16 @@
+[90m= [39m[34;4mApp\Models\GoogleAccount[39;24m {#8162
+    [34mid[39m: [35m4[39m,
+    [34muser_id[39m: [35m1[39m,
+    [34mgoogle_email[39m: [32m"[39m[32muntea.jessica08@gmail.com[39m[32m"[39m,
+    [34maccess_token[39m: [32m"[39m[32mya29.a0AT3oNZ88dbo5XX0ealK3KvIcGsWZsmk84qHL612g3qcTfGdkfD7gAbbhsCMZZkt9Hrcdtp8zzTebGeZghVzhWYj8k8ivHZJ7snxC2edQXZR8S4tEKKjl-LPgBGO-QhVTRyTtfhMNru5GFsCF-dH7P10eGumshYvrpCoZQlI10ba1blPiR3ZdrJX9LgTWdVH-tPyKwjMaCgYKAQYSARASFQHGX2Mis9c_5Rt2TSnqxHx7qpOyWg0206[39m[32m"[39m,
+    [34mrefresh_token[39m: [32m"[39m[32m1//09FjyVc2Nr4tKCgYIARAAGAkSNwF-L9Irj1F3UOqTNK3ohYFaOFkB5ds76JwYBb7pDI0N2Jcx1fo8ghSe5SeyycverSzx2186dcM[39m[32m"[39m,
+    [34mexpires_at[39m: [32m"[39m[32m2026-07-03 16:11:29[39m[32m"[39m,
+    [34mcalendar_id[39m: [32m"[39m[32mprimary[39m[32m"[39m,
+    [34msync_token[39m: [36mnull[39m,
+    [34mchannel_id[39m: [36mnull[39m,
+    [34mresource_id[39m: [36mnull[39m,
+    [34mwatch_expires_at[39m: [36mnull[39m,
+    [34mcreated_at[39m: [32m"[39m[32m2026-07-03 15:11:30[39m[32m"[39m,
+    [34mupdated_at[39m: [32m"[39m[32m2026-07-03 15:11:30[39m[32m"[39m,
+    [34mchannel_token[39m: [36mnull[39m,
+  }

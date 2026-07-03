@@ -15,6 +15,7 @@ class GoogleAccount extends Model
         'calendar_id',
         'sync_token',
         'channel_id',
+        'channel_token',
         'resource_id',
         'watch_expires_at',
     ];

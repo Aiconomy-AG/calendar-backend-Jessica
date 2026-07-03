@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\GoogleAccount;
 use App\Models\GoogleConnectState;
+use App\Services\GoogleCalendarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -39,7 +40,7 @@ class GoogleAuthController extends Controller
         ]);
     }
 
-    public function callback(Request $request)
+    public function callback(Request $request, GoogleCalendarService $googleCalendarService)
     {
         $state = $request->query('state');
 
@@ -54,7 +55,7 @@ class GoogleAuthController extends Controller
         $existingAccount = GoogleAccount::where('user_id', $connectState->user_id)
             ->first();
 
-        GoogleAccount::updateOrCreate(
+        $googleAccount = GoogleAccount::updateOrCreate(
             [
                 'user_id' => $connectState->user_id,
             ],
@@ -67,6 +68,16 @@ class GoogleAuthController extends Controller
                 'calendar_id' => 'primary',
             ]
         );
+
+        try {
+            $googleCalendarService->startWatch($googleAccount);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Google watch channel failed', [
+                'google_account_id' => $googleAccount->id,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
 
         $connectState->delete();
 
