@@ -131,23 +131,53 @@ class GoogleCalendarService
         );
     }
 
-    // citeste evenimentele din google calendar pe interval (-3,+12) luni
-    public function listEvents(GoogleAccount $googleAccount): array
+    public function listEvents(GoogleAccount $googleAccount, bool $useSyncToken = false): array
     {
         $calendarService = $this->getCalendarService($googleAccount);
 
-        $events = $calendarService->events->listEvents(
-            $googleAccount->calendar_id,
-            [
-                'singleEvents' => true,
-                'orderBy' => 'startTime',
-                'showDeleted' => true,
-                'timeMin' => now()->subMonths(3)->toRfc3339String(),
-                'timeMax' => now()->addMonths(12)->toRfc3339String(),
-            ]
-        );
+        $items = [];
+        $pageToken = null;
+        $nextSyncToken = null;
 
-        return $events->getItems();
+        do {
+            $params = [
+                'singleEvents' => true,
+                'showDeleted' => true,
+                'maxResults' => 2500,
+            ];
+
+            if ($pageToken) {
+                $params['pageToken'] = $pageToken;
+            }
+
+            if ($useSyncToken && $googleAccount->sync_token) {
+                // Incremental sync
+                $params['syncToken'] = $googleAccount->sync_token;
+            } else {
+                // Full sync: (-3,+12) luni
+                $params['orderBy'] = 'startTime';
+                $params['timeMin'] = now()->subMonths(3)->toRfc3339String();
+                $params['timeMax'] = now()->addMonths(12)->toRfc3339String();
+            }
+
+            $events = $calendarService->events->listEvents(
+                $googleAccount->calendar_id,
+                $params
+            );
+
+            $items = array_merge($items, $events->getItems());
+
+            $pageToken = $events->getNextPageToken();
+
+            if (! $pageToken) {
+                $nextSyncToken = $events->getNextSyncToken();
+            }
+        } while ($pageToken);
+
+        return [
+            'items' => $items,
+            'next_sync_token' => $nextSyncToken,
+        ];
     }
 
     public function startWatch(GoogleAccount $googleAccount): GoogleAccount

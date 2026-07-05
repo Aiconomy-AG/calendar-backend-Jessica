@@ -14,6 +14,11 @@ class GoogleAccount extends Model
         'expires_at',
         'calendar_id',
         'sync_token',
+        'sync_status',
+        'sync_error',
+        'last_webhook_at',
+        'last_sync_attempt_at',
+        'last_successful_sync_at',
         'channel_id',
         'channel_token',
         'resource_id',
@@ -23,5 +28,8 @@ class GoogleAccount extends Model
     protected $casts = [
         'expires_at' => 'datetime',
         'watch_expires_at' => 'datetime',
+        'last_webhook_at' => 'datetime',
+        'last_sync_attempt_at' => 'datetime',
+        'last_successful_sync_at' => 'datetime',
     ];
 }
